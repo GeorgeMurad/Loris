@@ -48,7 +48,7 @@ class CouchDBDemographicsImporter
         ],
         'Sex'              => [
             'Description' => 'Candidate\'s biological sex',
-            'Type'        => "enum('Male', 'Female', 'Other')"
+            'Type'        => "varchar(255)"
         ],
         'Site'             => [
             'Description' => 'Site that this visit took place at',
@@ -281,7 +281,9 @@ class CouchDBDemographicsImporter
         // Latest Diagnosis by project
         $projects = \Utility::getProjectList();
         foreach ($projects as $projectID => $project) {
-            $projectAlias = \Project::getProjectFromID($projectID)->getAlias();
+            $projectAlias = \Project::getProjectFromID(
+                new \ProjectID(strval($projectID))
+            )->getAlias();
             $latestProjDx = "latestDiagnosis_$projectAlias";
 
             $fieldsInQuery .= ", 
@@ -324,7 +326,7 @@ class CouchDBDemographicsImporter
         if ($config->getSetting("useProband") === "true") {
             $this->Dictionary["Sex_proband"]    = [
                 'Description' => 'Proband\'s biological sex',
-                'Type'        => "enum('Male','Female', 'Other')"
+                'Type'        => "varchar(255)"
             ];
             $this->Dictionary["Age_difference"] = [
                 'Description' => 'Age difference between the candidate and ' .
